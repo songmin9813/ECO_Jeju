@@ -1,0 +1,128 @@
+base_date(기준일자)와 cmd_nm(읍면동명)을 인덱스로 두고 테이블 작성
+모든 단위는 1일을 기준으로 설명하도록 함
+
+'long_resd_pop_cnt' : 장기체류 외국인 1일 측정 거주인구 
+'long_work_pop_cnt' : 장기체류 외국인 1일 측정 근무인구
+'long_visit_pop_cnt' : 장기체류 외국인 1일 측정 방문인구
+'long_nationality_AUS' : 오스트레일리아 소속 장기체류 외국인 수
+'long_nationality_BGD' : 방글라데시 소속 장기체류 외국인 수
+'long_nationality_CAN' : 캐나다 소속 장기체류 외국인 수
+'long_nationality_CHN' : 중국 소속 장기체류 외국인 수
+'long_nationality_DEU' : 독일 소속 장기체류 외국인 수
+'long_nationality_EGY' : 이집트 소속 장기체류 외국인 수
+'long_nationality_ETC' : 기타 소속 장기체류 외국인 수
+'long_nationality_FRA' : 프랑스 소속 장기체류 외국인 수
+'long_nationality_GBR' : 영국 소속 장기체류 외국인 수
+'long_nationality_IDN' : 인도네시아 소속 장기체류 외국인 수
+'long_nationality_IND' : 인도 소속 장기체류 외국인 수
+'long_nationality_JPN' : 일본 소속 장기체류 외국인 수
+'long_nationality_KAZ' : 카자흐스탄 소속 장기체류 외국인 수
+'long_nationality_KGZ' : 키르기스스탄 소속 장기체류 외국인 수
+'long_nationality_KHM' : 캄보디아 소속 장기체류 외국인 수
+'long_nationality_LKA' : 스리랑카 소속 장기체류 외국인 수
+'long_nationality_MGL' : 몽골 소속 장기체류 외국인 수
+'long_nationality_MMR' : 미얀마 소속 장기체류 외국인 수
+'long_nationality_MYS' : 말레이시아 소속 장기체류 외국인 수
+'long_nationality_NGR' : 나이지리아 소속 장기체류 외국인 수
+'long_nationality_NPL' : 네팔 소속 장기체류 외국인 수
+'long_nationality_NZL' : 뉴질랜드 소속 장기체류 외국인 수
+'long_nationality_PAK' : 파키스탄 소속 장기체류 외국인 수
+'long_nationality_PHL' : 필리핀 소속 장기체류 외국인 수
+'long_nationality_RUS' : 러시아 소속 장기체류 외국인 수
+'long_nationality_THA' : 태국 소속 장기체류 외국인 수
+'long_nationality_TWN' : 타이완 소속 장기체류 외국인 수
+'long_nationality_UKR' : 우크라이나 소속 장기체류 외국인 수
+'long_nationality_USA' : 미국 소속 장기체류 외국인 수
+'long_nationality_UZB' : 우즈베키스탄 소속 장기체류 외국인 수
+'long_nationality_VNM' : 베트남 소속 장기체류 외국인 수
+
+'short_nationality_CHN' : 중국 소속 단기체류 외국인 수
+'short_nationality_ETC' : 기타 소속 단기체류 외국인 수
+'short_nationality_HKG' : 홍콩 소속 단기체류 외국인 수
+'short_nationality_IDN' : 인도네시아 소속 단기체류 외국인 수
+'short_nationality_JPN' : 일본 소속 단기체류 외국인 수
+'short_nationality_MYS' : 말레이시아 소속 단기체류 외국인 수
+'short_nationality_SGP' : 싱가폴 소속 단기체류 외국인 수
+'short_nationality_THA' : 태국 소속 단기체류 외국인 수
+'short_nationality_USA' : 미국 소속 단기체류 외국인 수
+'short_nationality_VNM' : 베트남 소속 단기체류 외국인 수
+'short_visit_pop_cnt' : 단기체류 외국인 1일 측정 거주인구 
+~~삭제 예정 컬럼~~
+'short_nationality_CHN.1' 
+'short_nationality_ETC.1'
+'short_nationality_HKG.1'
+'short_nationality_IDN.1'
+'short_nationality_JPN.1'
+'short_nationality_MYS.1'
+'short_nationality_SGP.1'
+'short_nationality_THA.1'
+'short_nationality_USA.1'
+'short_nationality_VNM.1'
+'short_visit_pop_cnt.1'
+~~삭제 예정 컬럼 끝~~
+
+'waste_em_cnt' : 쓰레기 일일 배출건수
+'waste_em_g' : 쓰레기 일일 총 배출량
+'waste_pay_amt' : 쓰레기 총 지불금액
+'card_use_cnt' : 음식 관련 카드소비 결제 건수
+'card_use_amt' : 음식 관련 카드소비 총 결제 금액
+'korean_resd_pop_cnt' : 내국인 1일 측정 거주인구
+'korean_work_pop_cnt' : 내국인 1일 측정 근무인구
+'korean_visit_pop_cnt' : 내국인 1일 측정 방문인구
+'korean_sex_남성' : 내국인 유동인구 중 남성 성별
+'korean_sex_여성' : 내국인 유동인구 중 여성 성별
+'korean_age_0' : 내국인 유동인구 연령대 10대 미만
+'korean_age_10' : 내국인 유동인구 연령대 10세 이상
+'korean_age_20' : 내국인 유동인구 연령대 20세 이상
+'korean_age_30' : 내국인 유동인구 연령대 30세 이상
+'korean_age_40' : 내국인 유동인구 연령대 40세 이상
+'korean_age_50' : 내국인 유동인구 연령대 50세 이상
+'korean_age_60' : 내국인 유동인구 연령대 60세 이상
+'korean_age_70' : 내국인 유동인구 연령대 70세 이상
+'korean_age_80' : 내국인 유동인구 연령대 80세 이상
+
+아래는 읍면동을 가나다순으로 범주화 시킨 딕셔너리 값
+{'건입동': 0,
+ '구좌읍': 1,
+ '남원읍': 2,
+ '노형동': 3,
+ '대륜동': 4,
+ '대정읍': 5,
+ '대천동': 6,
+ '도두동': 7,
+ '동홍동': 8,
+ '봉개동': 9,
+ '삼도1동': 10,
+ '삼도2동': 11,
+ '삼양동': 12,
+ '서홍동': 13,
+ '성산읍': 14,
+ '송산동': 15,
+ '아라동': 16,
+ '안덕면': 17,
+ '알수없음': 18,
+ '애월읍': 19,
+ '연동': 20,
+ '영천동': 21,
+ '예래동': 22,
+ '오라동': 23,
+ '외도동': 24,
+ '용담1동': 25,
+ '용담2동': 26,
+ '우도면': 27,
+ '이도1동': 28,
+ '이도2동': 29,
+ '이호동': 30,
+ '일도1동': 31,
+ '일도2동': 32,
+ '정방동': 33,
+ '조천읍': 34,
+ '중문동': 35,
+ '중앙동': 36,
+ '천지동': 37,
+ '추자면': 38,
+ '표선면': 39,
+ '한경면': 40,
+ '한림읍': 41,
+ '화북동': 42,
+ '효돈동': 43}
