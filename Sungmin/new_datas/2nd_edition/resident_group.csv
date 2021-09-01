@@ -1,4 +1,4 @@
-,base_year,base_month,emd_nm,sex,resid_reg_pop,foreign_pop,total_pop
+,resident_base_year,resident_base_month,resident_emd_nm,resident_sex,resident_resid_reg_pop,resident_foreign_pop,resident_total_pop
 0,2018,1,건입동,남성,5085,146,5231
 1,2018,1,건입동,여성,4715,82,4797
 2,2018,1,구좌읍,남성,7965,368,8333

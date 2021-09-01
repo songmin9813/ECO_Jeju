@@ -1,4 +1,4 @@
-base_date,emd_nm,em_cnt,em_g,pay_amt
+base_date,emd_nm,waste_em_cnt,waste_em_g,waste_pay_amt
 2018-01-01,건입동,668,1708250,51079
 2018-01-01,남원읍,304,1239600,37110
 2018-01-01,노형동,3903,9357900,278317

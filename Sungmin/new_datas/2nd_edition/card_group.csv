@@ -1,4 +1,4 @@
-base_date,emd_nm,use_cnt,use_amt
+base_date,emd_nm,card_use_cnt,card_use_amt
 2018-01-01,건입동,1806,61606900
 2018-01-01,구좌읍,1180,43303254
 2018-01-01,남원읍,1581,69402997
