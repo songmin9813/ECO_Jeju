@@ -33,7 +33,6 @@ dfbase.isna().sum()
 
 new_base = dfbase.set_index(["base_date", "emd_nm"])
 
-
 imputer = SimpleImputer(strategy = 'mean')
 new_dfbase = pd.DataFrame(imputer.fit_transform(new_base))
 
