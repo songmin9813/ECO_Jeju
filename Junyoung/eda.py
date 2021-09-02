@@ -21,9 +21,11 @@ from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
+import statsmodels.api as sm
 
 
-path = "D:/git_project/ECO_Jeju/Sungmin/new_datas/2nd_edition"
+# path = "D:/git_project/ECO_Jeju/Sungmin/new_datas/2nd_edition"
+path = "C:/Users/82106/OneDrive/문서/GitHub/ECO_Jeju/Sungmin/new_datas/2nd_edition/"
 
 # waste = pd.read_csv(path + "/01_음식물쓰레기_FOOD_WASTE_210811_update.CSV", encoding = "CP949", low_memory=False)
 # korean = pd.read_csv(path + "/02-1_내국인유동인구_KOREAN.CSV", encoding = "CP949")
@@ -48,9 +50,6 @@ waste.info()
 new_waste = waste
 
 
-enm = waste["emd_nm"].value_counts()
-
-
 temp=list(waste.groupby(['emd_nm']))
 new_list=[]
 for value in temp:
@@ -63,50 +62,11 @@ for i,value in enumerate(new_list):
 le.fit(waste["emd_nm"])
 emd_nm = le.transform(waste["emd_nm"])
 new_waste["emd_nm"] = emd_nm
-
-
 new_waste = new_waste.set_index(["base_date", "emd_nm"])
 
 
 
-x = new_waste.drop("waste_em_g", axis=1)
-y = np.array(new_waste["waste_em_g"])
 
-sc_x = sc.fit_transform(x)
-sc_y = sc.fit_transform(y.reshape(-1,1))
-
-
-train_x, test_x, train_y, test_y = train_test_split(sc_x, sc_y, test_size = 0.3, random_state = 100)
-
-models = []
-models.append(['Ridge', Ridge()])
-models.append(['Lasso', Lasso()])
-models.append(['ElasticNet', ElasticNet()])
-# models.append(['SVR', SVR()])
-models.append(['Random Forest', RandomForestRegressor()])
-models.append(['XGBoost', XGBRegressor()])
-models.append(['LinearRegression', LinearRegression()])
-models.append(['CatBoostRegressor', CatBoostRegressor(logging_level=("Silent"))])
-models.append(['PLSRegression', PLSRegression()])
-models.append(['Lightgbm', LGB.LGBMRegressor()])
-
-list_1 = []
-
-for m in range(len(models)):
-    print(models[m])
-    model = models[m][1]
-    model.fit(train_x, train_y)
-    y_pred = model.predict(test_x)
-    scores = mean_squared_error(test_y, y_pred)**0.5
-    list_1.append(scores)
-
-
-df_1 = pd.DataFrame(models)    
-df = pd.DataFrame(list_1)
-df.index = df_1.iloc[:,0]
-
-
-df
 
 #%% korean 전처리
 
@@ -125,37 +85,119 @@ dict_={}
 for i,value in enumerate(new_list):
     dict_[value]=i
 
-
 le.fit(korean["emd_nm"])
 emd_nm = le.transform(korean["emd_nm"])
 new_korean["emd_nm"] = emd_nm
 
-new_korean = new_korean.set_index(["base_date", "emd_nm"])
-new_korean.columns
+
 new_korean = new_korean.drop(['korean_sex_남성', 'korean_sex_여성', 'korean_age_0', 'korean_age_10',
        'korean_age_20', 'korean_age_30', 'korean_age_40', 'korean_age_50',
        'korean_age_60', 'korean_age_70', 'korean_age_80'], axis = 1)
 
 
-#%% concat waste korean
-
-waste_korean = pd.concat([new_waste, new_korean], axis = 1)
-col = waste_korean.columns
+new_korean = new_korean.set_index(["base_date", "emd_nm"])
 
 
+
+
+#%% long 전처리
+
+long
+long.info()
+
+long.isna().sum()
+new_long = long
+
+new_long.columns
+
+
+new_long = new_long.drop(['long_nationality_AUS', 'long_nationality_BGD',
+       'long_nationality_CAN', 'long_nationality_CHN', 'long_nationality_DEU',
+       'long_nationality_EGY', 'long_nationality_ETC', 'long_nationality_FRA',
+       'long_nationality_GBR', 'long_nationality_IDN', 'long_nationality_IND',
+       'long_nationality_JPN', 'long_nationality_KAZ', 'long_nationality_KGZ',
+       'long_nationality_KHM', 'long_nationality_LKA', 'long_nationality_MGL',
+       'long_nationality_MMR', 'long_nationality_MYS', 'long_nationality_NGR',
+       'long_nationality_NPL', 'long_nationality_NZL', 'long_nationality_PAK',
+       'long_nationality_PHL', 'long_nationality_RUS', 'long_nationality_THA',
+       'long_nationality_TWN', 'long_nationality_UKR', 'long_nationality_USA',
+       'long_nationality_UZB', 'long_nationality_VNM'], axis = 1)
+
+
+
+le.fit(long["emd_nm"])
+emd_nm = le.transform(long["emd_nm"])
+new_long["emd_nm"] = emd_nm
+
+new_long = new_long.set_index(["base_date", "emd_nm"])
+
+
+
+
+
+#%% short 전처리
+
+short
+short.info()
+short.columns
+
+new_short = short
+new_short = new_short.drop(['short_nationality_CHN', 'short_nationality_ETC',
+       'short_nationality_HKG', 'short_nationality_IDN',
+       'short_nationality_JPN', 'short_nationality_MYS',
+       'short_nationality_SGP', 'short_nationality_THA',
+       'short_nationality_USA', 'short_nationality_VNM'], axis = 1)
+
+
+le.fit(short["emd_nm"])
+emd_nm = le.transform(short["emd_nm"])
+new_short["emd_nm"] = emd_nm
+
+new_short = new_short.set_index(["base_date", "emd_nm"])
+
+#%% resdient 전처리 년도와 월을합쳐서 진행해보자!!!
+
+res
+res.info()
+res.isna().sum()
+
+new_res = res
+
+le.fit(res["emd_nm"])
+emd_nm = le.transform(res["emd_nm"])
+new_res["emd_nm"] = emd_nm
+res.columns
+
+
+
+
+#%% card 전처리
+
+card
+card.info()
+card.isna().sum()
+
+new_card = card
+
+le.fit(card["emd_nm"])
+emd_nm = le.transform(card["emd_nm"])
+new_card["emd_nm"] = emd_nm
+
+new_card = new_card.set_index(["base_date", "emd_nm"])
+
+#%% 데이터 합치기, train test 셋 분리
+data = pd.concat([new_waste, new_korean, new_long, new_short, new_card], axis = 1)
+col = data.columns
+data_index = data.index
 
 imputer = SimpleImputer(strategy = 'mean')
-new_dfbase = pd.DataFrame(imputer.fit_transform(waste_korean))
-new_dfbase.columns = col
+imp_data = pd.DataFrame(imputer.fit_transform(data))
+imp_data.columns = col
+imp_data = imp_data.set_index(data_index)
 
-
-df_corr = new_dfbase.corr()
-
-
-x = new_dfbase.drop("waste_em_g", axis=1)
-y = np.array(new_dfbase["waste_em_g"])
-
-sc = StandardScaler()
+x = imp_data.drop("waste_em_g", axis=1)
+y = np.array(imp_data["waste_em_g"])
+x.columns
 
 sc_x = sc.fit_transform(x)
 sc_y = sc.fit_transform(y.reshape(-1,1))
@@ -163,13 +205,20 @@ sc_y = sc.fit_transform(y.reshape(-1,1))
 
 train_x, test_x, train_y, test_y = train_test_split(sc_x, sc_y, test_size = 0.3, random_state = 100)
 
-#%% 모델학습
+#%% 단순선형회귀분석
 
+
+model1 = sm.OLS(train_y, train_x)
+fitted_model = model1.fit()
+fitted_model.summary()
+
+
+#%% 모델링
 models = []
 models.append(['Ridge', Ridge()])
 models.append(['Lasso', Lasso()])
 models.append(['ElasticNet', ElasticNet()])
-# models.append(['SVR', SVR()])
+models.append(['SVR', SVR()])
 models.append(['Random Forest', RandomForestRegressor()])
 models.append(['XGBoost', XGBRegressor()])
 models.append(['LinearRegression', LinearRegression()])
@@ -194,67 +243,3 @@ df.index = df_1.iloc[:,0]
 
 
 df
-y_pred
-
-
-#%% long 전처리
-
-long
-long.info()
-
-long.isna().sum()
-new_long = long
-
-le.fit(long["nationality"])
-nationality = le.transform(long["nationality"])
-new_long["nationality"] = nationality
-
-
-new_na = new_long["nationality"]
-
-le.fit(long["city"])
-city = le.transform(long["city"])
-new_long["long"] = city
-
-le.fit(long["emd_nm"])
-emd_nm = le.transform(long["emd_nm"])
-new_long["emd_nm"] = emd_nm
-
-
-lcd = long["emd_cd"].value_counts()
-lnm = long["emd_nm"].value_counts()
-
-
-#%% short 전처리
-
-short
-short.info()
-short.isna().sum()
-
-scd = short["emd_cd"].value_counts()
-snm = short["emd_nm"].value_counts()
-
-
-
-#%% resdient 전처리
-
-res
-res.info()
-res.isna().sum()
-
-rcd = res["emd_cd"].value_counts()
-rnm = res["emd_nm"].value_counts()
-
-
-#%% card 전처리
-
-card
-card.info()
-card.isna().sum()
-
-ccd = card["emd_cd"].value_counts()
-cnm = card["emd_nm"].value_counts()
-
-
-cmct_ccd = card["mct_cat_cd"].value_counts()
-cmct_nm = card["mct_cat_nm"].value_counts()
