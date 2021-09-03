@@ -126,3 +126,15 @@ base_date(기준일자)와 cmd_nm(읍면동명)을 인덱스로 두고 테이블
  '한림읍': 41,
  '화북동': 42,
  '효돈동': 43}
+
+1차로 살아있는 10개의 변수 정의서
+'waste_em_cnt' : 쓰레기 일일 배출건수
+'waste_pay_amt' : 쓰레기 총 지불금액
+'korean_work_pop_cnt' : 내국인 1일 측정 근무인구
+'korean_visit_pop_cnt' : 내국인 1일 측정 방문인구
+'long_resd_pop_cnt' : 장기체류 외국인 1일 측정 거주인구 
+'long_work_pop_cnt' : 장기체류 외국인 1일 측정 근무인구
+'long_visit_pop_cnt' : 장기체류 외국인 1일 측정 방문인구
+'short_visit_pop_cnt' : 단기체류 외국인 1일 측정 거주인구 
+'card_use_cnt' : 음식 관련 카드소비 결제 건수
+'card_use_amt' : 음식 관련 카드소비 총 결제 금액

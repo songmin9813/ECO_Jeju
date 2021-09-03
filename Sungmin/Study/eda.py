@@ -24,7 +24,7 @@ import statsmodels.api as sm ## 단순선형회귀분석에 사용
 
 
 # path = "D:/git_project/ECO_Jeju/Sungmin/new_datas/2nd_edition"
-path = "C:/Users/82106/OneDrive/문서/GitHub/ECO_Jeju/Sungmin/new_datas/2nd_edition/"
+path = "C:/Users/mitha/OneDrive/바탕 화면/dev/ECO_Jeju/Sungmin/new_datas/2nd_edition/"
 
 # waste = pd.read_csv(path + "/01_음식물쓰레기_FOOD_WASTE_210811_update.CSV", encoding = "CP949", low_memory=False)
 # korean = pd.read_csv(path + "/02-1_내국인유동인구_KOREAN.CSV", encoding = "CP949")
@@ -220,7 +220,7 @@ train_x, test_x, train_y, test_y = train_test_split(sc_x, sc_y, test_size = 0.3,
 model1 = sm.OLS(train_y, train_x) 
 fitted_model = model1.fit()
 fitted_model.summary() 
-
+tempx=x.corr()
 # 1.korean_resd_pop_cnt 변수의 p-value 값이 0.05보다 높아서 삭제
 ## 전부 0.05안에 들어 유의미한 변수이며 R결정계수값이 0.979로 높으편이다
 
