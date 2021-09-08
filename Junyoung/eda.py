@@ -12,17 +12,17 @@ from sklearn.preprocessing import MinMaxScaler ## StandardScaler를 위해 사�
 from sklearn.ensemble import RandomForestRegressor ## 랜덤포레스트 회귀모델
 from sklearn.linear_model import LinearRegression ## 선형 회귀모델
 from xgboost import XGBRegressor ## XGBoost 회귀모델
-import xgboost
 from catboost import CatBoostRegressor ## CatBoost 회귀모델
 import lightgbm as LGB ## LGBM 모델
-from sklearn.cross_decomposition import PLSRegression ## PLS 회귀모델
-from sklearn.linear_model import Lasso,ElasticNet,Ridge ## Lasso, Ridge, ElasticNet 회귀모델
+from sklearn.linear_model import Lasso, Ridge
 from sklearn.svm import SVR ## SVM 회귀모델
 from sklearn.metrics import mean_squared_error ## 평가지표로 사용할 MSE
 from sklearn.impute import SimpleImputer ## 결측값 처리 패키지
 import statsmodels.api as sm ## 단순선형회귀분석에 사용
 import matplotlib.pyplot as plt
-
+from sklearn.model_selection import GridSearchCV
+import warnings
+warnings.filterwarnings("ignore")
 
 # path = "D:/git_project/ECO_Jeju/Sungmin/new_datas/2nd_edition"
 path = "D:/git_project/ECO_Jeju/Sungmin/new_datas/3rd_edition"
@@ -211,7 +211,7 @@ imp_data = imp_data.set_index(data_index)
 
 
 ## 이 부분에서 변수를 삭제해서 더 진행할 수 있다.
-x = imp_data.drop(["waste_em_g"], axis=1)
+x = imp_data.drop(["waste_em_g", "korean_resd_pop_cnt", "long_visit_pop_cnt", "short_visit_pop_cnt", "long_resd_pop_cnt"], axis=1)
 x.columns
 y = np.array(imp_data["waste_em_g"])
 # 모델링을 하기 위해 train과 test셋을 2018-01부터 2021-03까지로 나눈다 704 
@@ -220,8 +220,7 @@ test_x = x.iloc[1680:]
 train_y = y[0:1680]
 test_y = y[1680:]
 
-train_x = ms.fit_transform(train_x)
-train_y = ms.fit_transform(train_y.reshape(-1,1))
+
 
 #%% 단순선형회귀분석  
 
@@ -230,48 +229,81 @@ fitted_model = model1.fit()
 fitted_model.summary() 
 
 
-# 유의수준 0.05보다 높은 변수가 x3, x4, x8, x9, x10, x11, x12
-# "korean_resd_pop_cnt", "korean_work_pop_cnt", "long_visit_pop_cnt",
-# "short_visit_pop_cnt", "resident_resid_reg_pop", "resident_foreign_pop", 
-# "resident_total_pop", "korean_visit_pop_cnt"
+# 유의수준 0.05보다 높은 변수가 "korean_resd_pop_cnt","long_visit_pop_cnt","short_visit_pop_cnt"
+# 
 ## 전부 0.05안에 들어 유의미한 변수이며 R결정계수값이 0.979로 높으편이다
 
 
 #%% 모델링
+# lightgbm, RandomForest, XGBoost 모델에는 정규화가 필요가 없다. -> tree형 모델들이기 때문 
 models = []
 models.append(['Ridge', Ridge()])
 models.append(['Lasso', Lasso()])
-models.append(['ElasticNet', ElasticNet()])
 models.append(['SVR', SVR()])
 models.append(['Random Forest', RandomForestRegressor()])
 models.append(['XGBoost', XGBRegressor()])
 models.append(['LinearRegression', LinearRegression()])
 models.append(['CatBoostRegressor', CatBoostRegressor(logging_level=("Silent"))])
-models.append(['PLSRegression', PLSRegression()])
 models.append(['Lightgbm', LGB.LGBMRegressor()])
+
 
 list_1 = []
 
-# for m in range(len(models)):
-#     print(models[m])
-#     model = models[m][1]
-#     model.fit(train_x, train_y)
-#     y_pred = model.predict(test_x)
-#     scores = mean_squared_error(test_y, y_pred)**0.5
-#     list_1.append(scores)
-
-xgb_model = xgboost.XGBRegressor(n_estimators=100, learning_rate = 0.08, max_depth=7)
-xgb_model.fit(train_x, train_y)
-predictions = xgb_model.predict(test_x)
-predictions
-
+for m in range(len(models)):
+    print(models[m])
+    model = models[m][1]
+    model.fit(train_x, train_y)
+    y_pred = model.predict(test_x)
+    scores = mean_squared_error(test_y, y_pred)**0.5
+    list_1.append(scores)
 
 df_1 = pd.DataFrame(models)    
 df = pd.DataFrame(list_1)
 df.index = df_1.iloc[:,0]
 
 
+## Lightgbm 모델의 rmse가 가장 낮음
 df
 
+#%% 하이퍼 파라미터 튜닝
+gridParams = { 
+    'learning_rate': [0.005],
+    'n_estimators': [40],
+    'num_leaves': [16,32, 64], 
+    'random_state' : [501],
+    'num_boost_round' : [3000],
+    'colsample_bytree' : [0.65, 0.66],
+    'subsample' : [0.7,0.75],
+    'reg_alpha' : [1,1.2],
+    'reg_lambda' : [1,1.2,1.4], 
+    }
+
+lgbm  = LGB.LGBMRegressor(n_estimators=100)
+
+gridcv = GridSearchCV(lgbm, param_grid = gridParams, cv = 3)
+gridcv.fit(train_x, train_y, eval_metric = 'mse')
+
+
+print('Optimized hyperparameters', gridcv.best_params_)
+
+
+
+#%% 최적의 모형선정
+model = LGB.LGBMRegressor(colsample_bytree = 0.65,
+                           learning_rate = 0.005,
+                           n_estimators = 40, 
+                           num_boost_round = 3000, 
+                           num_leaves = 64,
+                           random_state = 501,
+                           reg_alpha = 1,
+                           reg_lambda = 1, 
+                           subsample = 0.7)
+
+model.fit(train_x, train_y)
+y_pred = model.predict(test_x)
+scores = mean_squared_error(test_y, y_pred)**0.5
+
+y_pred
+scores
 
 
