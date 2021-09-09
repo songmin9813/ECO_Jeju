@@ -56,6 +56,7 @@ for i,value in enumerate(new_list):
     dict_[value]=i
 
 
+emd_nm = new_waste["emd_nm"]
 ## le.fit을 이용해 명목형변수로 변경
 le.fit(waste["emd_nm"])
 emd_nm = le.transform(waste["emd_nm"])
