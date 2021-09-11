@@ -2,16 +2,63 @@ library(ggplot2)
 library(tidyverse)
 library(data.table)
 setwd("D:/git_project/ECO_Jeju/Sungmin/new_datas/3rd_edition")
-
 waste <- read.csv("waste_group1.csv", encoding = 'CP949')
+  
 
+# 평균버리는 쓰레기량
+emg_g_day_sum <- waste %>% group_by(emd_nm) %>% summarise(waste_em_g = sum(as.numeric(waste_em_g)/as.numeric(waste_em_cnt)))
+windows()
+ggplot(emg_g_day_sum, aes(x=reorder(emd_nm,waste_em_g), y=waste_em_g)) + geom_bar(stat = "identity") +
+  theme(axis.text.x=element_text(angle = 45)) +
+  theme(axis.text.x=element_text(vjust=0.5)) +
+  labs(title = "읍면동별 평균 쓰레기배출량") +
+  labs(x='읍면동', y='평균쓰레기배출량') 
+
+
+emg_g_sum <- waste %>% group_by(emd_nm) %>% summarise(waste_em_g = sum(as.numeric(waste_em_g)))
+ggplot(emg_g_sum, aes(x=reorder(emd_nm,waste_em_g), y=waste_em_g)) + geom_bar(stat = "identity") +
+  theme(axis.text.x=element_text(angle = 45)) +
+  theme(axis.text.x=element_text(vjust=0.5)) +
+  labs(title = "읍면동별 총 쓰레기배출량") +
+  labs(x='읍면동', y='총쓰레기배출량') 
+
+
+
+windows()
+emg_g_mean <- waste %>% group_by(emd_nm) %>% summarise(waste_em_g = mean(as.numeric(waste_em_g)))
+ggplot(emg_g_mean, aes(x=reorder(emd_nm,waste_em_g), y=waste_em_g)) + geom_bar(stat = "identity") +
+  theme(axis.text.x=element_text(angle = 45)) +
+  theme(axis.text.x=element_text(vjust=0.5)) +
+  labs(title = "읍면동별 쓰레기 총량") +
+  labs(x='읍면동', y='총합쓰레기량') 
+
+
+  
+
+
+
+# 어느 월에 쓰레기가 가장 많이 나왔는지도 봐야함
+emg_g_month <- waste %>% group_by(base_date, emd_nm) %>% summarise(sum_em_g = sum(as.numeric(waste_em_g)))
+emg_g_month
+
+windows()
+ggplot(emg_g_month, aes(x=emd_nm, y=sum_em_g, group=emd_nm)) +
+  geom_line(aes(color = emd_nm)) +
+  facet_wrap(~base_date)
+
+
+
+# 년도별 쓰레기량
 windows()
 ggplot(waste, aes(x=base_date, y=waste_em_g, group=emd_nm)) + 
   geom_line(aes(color=emd_nm)) +
   theme_bw() +
   theme(axis.text.x=element_text(angle = 45)) +
-  theme(axis.text.x=element_text(hjust=1.2))
-unique(waste$emd_nm)
+  theme(axis.text.x=element_text(hjust=1.2)) +
+  labs(x='년월', y='읍면동별 쓰레기량')
+
+
+
 
 library(ggmap)
 
