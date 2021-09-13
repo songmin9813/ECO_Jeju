@@ -3,7 +3,7 @@ library(tidyverse)
 library(data.table)
 setwd("D:/git_project/ECO_Jeju/Sungmin/new_datas/3rd_edition")
 waste <- read.csv("waste_group1.csv", encoding = 'CP949')
-  
+
 
 # Æò±Õ¹ö¸®´Â ¾²·¹±â·®
 emg_g_day_sum <- waste %>% group_by(emd_nm) %>% summarise(waste_em_g = sum(as.numeric(waste_em_g)/as.numeric(waste_em_cnt)))
@@ -15,8 +15,9 @@ ggplot(emg_g_day_sum, aes(x=reorder(emd_nm,waste_em_g), y=waste_em_g)) + geom_ba
   labs(x='À¾¸éµ¿', y='Æò±Õ¾²·¹±â¹èÃâ·®') 
 
 
-emg_g_sum <- waste %>% group_by(emd_nm) %>% summarise(waste_em_g = sum(as.numeric(waste_em_g)))
-ggplot(emg_g_sum, aes(x=reorder(emd_nm,waste_em_g), y=waste_em_g)) + geom_bar(stat = "identity") +
+windows()
+emg_g_sum <- waste %>% group_by(emd_nm) %>% summarise(total_em_g = sum(as.numeric(waste_em_g)))
+ggplot(emg_g_sum, aes(x=reorder(emd_nm,total_em_g), y=total_em_g)) + geom_bar(stat = "identity") +
   theme(axis.text.x=element_text(angle = 45)) +
   theme(axis.text.x=element_text(vjust=0.5)) +
   labs(title = "À¾¸éµ¿º° ÃÑ ¾²·¹±â¹èÃâ·®") +
@@ -25,15 +26,54 @@ ggplot(emg_g_sum, aes(x=reorder(emd_nm,waste_em_g), y=waste_em_g)) + geom_bar(st
 
 
 windows()
-emg_g_mean <- waste %>% group_by(emd_nm) %>% summarise(waste_em_g = mean(as.numeric(waste_em_g)))
-ggplot(emg_g_mean, aes(x=reorder(emd_nm,waste_em_g), y=waste_em_g)) + geom_bar(stat = "identity") +
+emg_g_mean <- waste %>% group_by(emd_nm) %>% summarise(mean_em_g = mean(as.numeric(waste_em_g)))
+ggplot(emg_g_mean, aes(x=reorder(emd_nm,mean_em_g), y=mean_em_g)) + geom_bar(stat = "identity") +
   theme(axis.text.x=element_text(angle = 45)) +
   theme(axis.text.x=element_text(vjust=0.5)) +
-  labs(title = "À¾¸éµ¿º° ¾²·¹±â ÃÑ·®") +
+  labs(title = "À¾¸éµ¿º° ¾²·¹±â ¹èÃâ·® ÃÑÇÕÀÇ Æò±Õ") +
+  labs(x='À¾¸éµ¿', y='ÃÑÇÕÀÇ Æò±Õ') 
+
+
+###############################################################RFID##############################################
+
+setwd("D:/git_project/ECO_Jeju/Sungmin/new_datas/external")
+
+rfid <- read.csv("rfid_group_new.csv")
+
+
+dis <- rfid$disQuantity
+disc <- rfid$disCount
+
+
+rfid_day_sum <- rfid %>% group_by(emd_nm) %>% summarise(rfid_disQuantity = sum(as.numeric(rfid$disQuantity)/as.numeric(disCount)))
+windows()
+ggplot(rfid_day_sum, aes(x=reorder(emd_nm,rfid_disQuantity), y=rfid_disQuantity)) + geom_bar(stat = "identity") +
+  theme(axis.text.x=element_text(angle = 45)) +
+  theme(axis.text.x=element_text(vjust=0.5)) +
+  labs(title = "À¾¸éµ¿º° Æò±Õ RFID ¾²·¹±â¹èÃâ·®") +
+  labs(x='À¾¸éµ¿', y='RFID Æò±Õ¾²·¹±â¹èÃâ·®') 
+
+
+
+rfid_sum <- rfid %>% group_by(emd_nm) %>% summarise(total_disQuantity = sum(as.numeric(disQuantity)))
+ggplot(rfid, aes(x=reorder(emd_nm,disQuantity_total), y=total_disQuantity)) + geom_bar(stat = "identity") +
+  theme(axis.text.x=element_text(angle = 45)) +
+  theme(axis.text.x=element_text(vjust=0.5)) +
+  labs(title = "À¾¸éµ¿º° ÃÑ RFID ¾²·¹±â¹èÃâ·®") +
+  labs(x='À¾¸éµ¿', y='ÃÑ RFID ¾²·¹±â¹èÃâ·®') 
+
+
+
+windows()
+rfid_mean <- rfid %>% group_by(emd_nm) %>% summarise(mean_disQuantity = mean(as.numeric(waste_em_g)))
+ggplot(rfid_mean, aes(x=reorder(emd_nm,mean_disQuantity), y=mean_disQuantity)) + geom_bar(stat = "identity") +
+  theme(axis.text.x=element_text(angle = 45)) +
+  theme(axis.text.x=element_text(vjust=0.5)) +
+  labs(title = "À¾¸éµ¿º° RFID ¾²·¹±â ÃÑ·®") +
   labs(x='À¾¸éµ¿', y='ÃÑÇÕ¾²·¹±â·®') 
 
 
-  
+
 
 
 
@@ -58,7 +98,7 @@ ggplot(waste, aes(x=base_date, y=waste_em_g, group=emd_nm)) +
   labs(x='³â¿ù', y='À¾¸éµ¿º° ¾²·¹±â·®')
 
 
-
+###################################################Á¦ÁÖµµ ½Ã°¢È­##############################################
 
 library(ggmap)
 
