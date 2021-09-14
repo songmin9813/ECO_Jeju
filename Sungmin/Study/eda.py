@@ -243,7 +243,7 @@ imp_corr2 = imp_corr1.corr()
 
 ## 이 부분에서 변수를 삭제해서 더 진행할 수 있다.
 
-x = imp_data.drop(["waste_em_g", "long_visit_pop_cnt", "korean_resd_pop_cnt", "korean_work_pop_cnt","disCount","long_resd_pop_cnt","waste_pay_amt","long_work_pop_cnt","mct_cat_nm_3","mct_cat_nm_6","mct_cat_nm_7"], axis=1)
+x = imp_data.drop(["waste_em_g", "long_visit_pop_cnt", "korean_resd_pop_cnt", "korean_visit_pop_cnt","korean_work_pop_cnt","disCount","long_resd_pop_cnt","waste_pay_amt","long_work_pop_cnt","mct_cat_nm_6","mct_cat_nm_7","mct_cat_nm_4","mct_cat_nm_1","mct_cat_nm_0","mct_cat_nm_8","mct_cat_nm_9"], axis=1)
 #x["disavr"]=imp_data["disQuantity"]/imp_data["disCount"]
 x.columns
 x_corr = x.corr()
@@ -363,9 +363,10 @@ print('Optimized hyperparameters', gridcv.best_params_)
 #%% 최적의 모형선정
 model = LGB.LGBMRegressor(colsample_bytree = 0.65,
                            learning_rate = 0.005,
-                           n_estimators = 40, 
-                           num_boost_round = 3000, 
-                           num_leaves = 64,
+                           n_estimators = 40,
+                           num_iterations=3000,
+                           feature_fraction=0.7,
+                           num_leaves = 63,
                            random_state = 501,
                            reg_alpha = 1,
                            reg_lambda = 1, 
