@@ -243,7 +243,7 @@ imp_corr2 = imp_corr1.corr()
 
 ## 이 부분에서 변수를 삭제해서 더 진행할 수 있다.
 
-x = imp_data.drop(["waste_em_g", "long_visit_pop_cnt", "korean_resd_pop_cnt", "korean_visit_pop_cnt","korean_work_pop_cnt","disCount","long_resd_pop_cnt","waste_pay_amt","long_work_pop_cnt","mct_cat_nm_6","mct_cat_nm_7","mct_cat_nm_4","mct_cat_nm_1","mct_cat_nm_0","mct_cat_nm_8","mct_cat_nm_9"], axis=1)
+x = imp_data.drop(["waste_em_g", "long_visit_pop_cnt", "korean_resd_pop_cnt", "korean_visit_pop_cnt","korean_work_pop_cnt","disCount","long_resd_pop_cnt","waste_pay_amt","long_work_pop_cnt","mct_cat_nm_6","mct_cat_nm_7","mct_cat_nm_4","mct_cat_nm_1","mct_cat_nm_0","mct_cat_nm_8","mct_cat_nm_9","use_cnt"], axis=1)
 #x["disavr"]=imp_data["disQuantity"]/imp_data["disCount"]
 x.columns
 x_corr = x.corr()
@@ -265,7 +265,7 @@ y_pred = fitted_model.predict(test_x)
 scores = mean_squared_error(test_y, y_pred)**0.5
 
 
-#%% VIC 확인 진행중
+#%% VIF 확인 진행중
 features = "waste_em_cnt+resident_resid_reg_pop+resident_foreign_pop+resident_total_pop+short_visit_pop_cnt+koreanvisit_pop_cnt"
 w, z = dmatrices("waste_em_g ~" + features, data=imp_data, return_type = "dataframe")
 vif = pd.DataFrame()
