@@ -38,8 +38,8 @@ korean = pd.read_csv(path + "/korean_group.csv")
 long = pd.read_csv(path + "/long_group.csv")
 short = pd.read_csv(path + "/short_group.csv")
 res = pd.read_csv(path + "/resident_group.csv")
-card = pd.read_csv(path + "/card_group.csv")
-rfid = pd.read_csv(path2 + "/rfid_group_new_nan.csv", encoding = "CP949")
+card = pd.read_csv(path + "/new_card_spending.csv")
+rfid = pd.read_csv(path2 + "/rfid_group_new_nan2.csv")
 
 ## 라벨인코더는 범주형 변수를 명목형 변수(수치형)으로 변환 할때 사용
 ## 피처들의 단위가 모두 다르므로 StandardScaler를 사용 -> 이상치가 있나 없나 탐지해봐야함
@@ -243,7 +243,7 @@ imp_corr2 = imp_corr1.corr()
 
 ## 이 부분에서 변수를 삭제해서 더 진행할 수 있다.
 
-x = imp_data.drop(["waste_em_g", "long_visit_pop_cnt", "short_visit_pop_cnt", "korean_resd_pop_cnt", "korean_visit_pop_cnt", "korean_work_pop_cnt", "card_use_amt", "card_use_cnt","long_resd_pop_cnt","waste_pay_amt","disQuantity","disCount","long_work_pop_cnt"], axis=1)
+x = imp_data.drop(["waste_em_g", "long_visit_pop_cnt", "korean_resd_pop_cnt", "korean_work_pop_cnt","disCount","long_resd_pop_cnt","waste_pay_amt","long_work_pop_cnt","mct_cat_nm_3","mct_cat_nm_6","mct_cat_nm_7"], axis=1)
 #x["disavr"]=imp_data["disQuantity"]/imp_data["disCount"]
 x.columns
 x_corr = x.corr()
@@ -266,7 +266,7 @@ scores = mean_squared_error(test_y, y_pred)**0.5
 
 
 #%% VIC 확인 진행중
-features = "waste_em_cnt+waste_pay_amt+long_resd_pop_cnt+long_work_pop_cnt+resident_resid_reg_pop+resident_foreign_pop+resident_total_pop+disQuantity+disCount"
+features = "waste_em_cnt+resident_resid_reg_pop+resident_foreign_pop+resident_total_pop+short_visit_pop_cnt+koreanvisit_pop_cnt"
 w, z = dmatrices("waste_em_g ~" + features, data=imp_data, return_type = "dataframe")
 vif = pd.DataFrame()
 vif["VIF Factor"] = [variance_inflation_factor(z.values, i) for i in range(z.shape[1])]
