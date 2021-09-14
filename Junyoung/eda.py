@@ -8,28 +8,22 @@ Created on Mon Aug 30 22:20:00 2021
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder ## 라벨인코딩을 위해 사용
-from sklearn.preprocessing import RobustScaler ## StandardScaler를 위해 사용
+from sklearn.preprocessing import RobustScaler # 단순선형회귀분석을 위해 사용
 from sklearn.ensemble import RandomForestRegressor ## 랜덤포레스트 회귀모델
-from sklearn.linear_model import LinearRegression ## 선형 회귀모델
 from xgboost import XGBRegressor ## XGBoost 회귀모델
 from catboost import CatBoostRegressor ## CatBoost 회귀모델
 import lightgbm as LGB ## LGBM 모델
-from sklearn.linear_model import Lasso, Ridge
-from sklearn.svm import SVR ## SVM 회귀모델
 from sklearn.metrics import mean_squared_error ## 평가지표로 사용할 MSE
 from sklearn.impute import SimpleImputer ## 결측값 처리 패키지
 import statsmodels.api as sm ## 단순선형회귀분석에 사용
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.model_selection import GridSearchCV
 from patsy import dmatrices
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 import warnings
 warnings.filterwarnings("ignore")
 
-# path = "D:/git_project/ECO_Jeju/Sungmin/new_datas/2nd_edition"
-path = "D:/git_project/ECO_Jeju/Sungmin/new_datas/3rd_edition"
-path2 = "D:/git_project/ECO_Jeju/Sungmin/new_datas/external"
+path = "D:/git_project/ECO_Jeju/Sungmin/new_datas/final_edition" # waste, korean, long, short, res, card 경로
+path2 = "D:/git_project/ECO_Jeju/Sungmin/new_datas/external" # rfid 경로
 path3 = "D:/빅콘테스트/데이터/02_평가데이터_update(210806)"
 
 
@@ -39,10 +33,9 @@ long = pd.read_csv(path + "/long_group.csv")
 short = pd.read_csv(path + "/short_group.csv")
 res = pd.read_csv(path + "/resident_group.csv")
 card = pd.read_csv(path + "/card_group.csv")
-rfid = pd.read_csv(path2 + "/rfid_group_new_nan.csv", encoding = "CP949")
+rfid = pd.read_csv(path + "/rfid_group.csv")
 
 ## 라벨인코더는 범주형 변수를 명목형 변수(수치형)으로 변환 할때 사용
-## 피처들의 단위가 모두 다르므로 StandardScaler를 사용 -> 이상치가 있나 없나 탐지해봐야함
 le = LabelEncoder()
 rs = RobustScaler()
 #%% waste 전처리
@@ -51,16 +44,6 @@ waste.info()
 new_waste = waste
 
 sample_index = waste["emd_nm"].unique()
-
-temp=list(waste.groupby(['emd_nm']))
-new_list=[]
-for value in temp:
-    new_list.append(value[0])
-new_list.sort()
-dict_={}
-for i,value in enumerate(new_list):
-    dict_[value]=i
-
 
 emd_nm = new_waste["emd_nm"]
 ## le.fit을 이용해 명목형변수로 변경
@@ -82,15 +65,6 @@ korean.info()
 new_korean = korean
 
 korean["emd_nm"].unique()
-
-temp=list(korean.groupby(['emd_nm']))
-new_list=[]
-for value in temp:
-    new_list.append(value[0])
-new_list.sort()
-dict_={}
-for i,value in enumerate(new_list):
-    dict_[value]=i
 
 le.fit(korean["emd_nm"])
 emd_nm = le.transform(korean["emd_nm"])
@@ -223,39 +197,48 @@ col = data.columns
 data_index = data.index
 
 
+# 7월 평균 데이터 생성
+sum_seven = data.loc['2018-07']+data.loc['2019-07']+data.loc['2020-07']
+avg_seven = sum_seven/3
+# 8월 평균데이터 생성
+sum_eight = data.loc['2018-08']+data.loc['2018-08']+data.loc['2018-08']
+avg_eight = sum_eight/3
 
+# 멀티인덱스 생성
+index_2 = [['2021-07','2021-08'],['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21',
+                                  '22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41']]
+
+
+multi_index_2 = pd.MultiIndex.from_product(index_2)
+new_index = data_index.append(multi_index_2)
+
+
+new_data = pd.concat([data, avg_seven, avg_eight])
 
 ## 결측값을 각 피처들의 평균값으로 대체하기 위해 SimpleImputer 사용
 imputer = SimpleImputer(strategy = 'mean')
-imp_data = pd.DataFrame(imputer.fit_transform(data))
+imp_data = pd.DataFrame(imputer.fit_transform(new_data))
 imp_data.columns = col
-imp_data = imp_data.set_index(data_index)
+imp_data = imp_data.set_index(new_index)
 
 
 
-imp_corr1 = imp_data.drop(["waste_em_g"], axis = 1) 
-imp_corr2 = imp_corr1.corr()
-# for i in imp_data.columns: 
-#     plt.figure(figsize = (7,7))
-#     imp_data.boxplot(column=[i])
-
-
-
-## 이 부분에서 변수를 삭제해서 더 진행할 수 있다.
-x = imp_data.drop(["waste_em_g", "long_visit_pop_cnt", "short_visit_pop_cnt", "korean_resd_pop_cnt", "korean_visit_pop_cnt", "korean_work_pop_cnt", "card_use_amt", "card_use_cnt"], axis=1)
+x = imp_data.drop(["waste_em_g", "long_visit_pop_cnt", "korean_resd_pop_cnt", "korean_visit_pop_cnt","korean_work_pop_cnt","disCount","long_resd_pop_cnt","waste_pay_amt","long_work_pop_cnt","mct_cat_nm_6","mct_cat_nm_7","mct_cat_nm_4","mct_cat_nm_1","mct_cat_nm_0","mct_cat_nm_8","mct_cat_nm_9","use_cnt"], axis=1)
 x.columns
+
+# 변수삭제 반복 후 상관계수 비교
 x_corr = x.corr()
 y = np.array(imp_data["waste_em_g"])
-# 모델링을 하기 위해 train과 test셋을 2018-01부터 2021-03까지로 나눈다 704 
-train_x = x.iloc[0:1680]
-test_x = x.iloc[1680:]
-train_y = y[0:1680]
-test_y = y[1680:]
+# 모델링을 하기 위해 train과 test셋을 2018-01부터 2021-04까지로 나눈다 704 
+train_x = x.iloc[0:1764]
+test_x = x.iloc[1764:]
+train_y = y[0:1764]
+test_y = y[1764:]
 
 
-train_rs_x = rs.fit_transform(train_x)
 #%% 단순선형회귀분석  
-
+# 단순선형귀분석에 이용하기 위해 robust scaling을 진행
+train_rs_x = rs.fit_transform(train_x)
 model1 = sm.OLS(train_y, train_rs_x) 
 fitted_model = model1.fit()
 fitted_model.summary() 
@@ -263,60 +246,23 @@ y_pred = fitted_model.predict(test_x)
 scores = mean_squared_error(test_y, y_pred)**0.5
 
 
-#%% VIC 확인 진행중
-features = "waste_em_cnt+waste_pay_amt+long_resd_pop_cnt+long_work_pop_cnt+resident_resid_reg_pop+resident_foreign_pop+resident_total_pop+disQuantity+disCount"
+#%% VIF 확인
+features = "waste_em_cnt+short_visit_pop_cnt+resident_resid_reg_pop+resident_foreign_pop+resident_total_pop+mct_cat_nm_2+mct_cat_nm_3+mct_cat_nm_5+mct_cat_nm_10+disQuantity"
 w, z = dmatrices("waste_em_g ~" + features, data=imp_data, return_type = "dataframe")
 vif = pd.DataFrame()
 vif["VIF Factor"] = [variance_inflation_factor(z.values, i) for i in range(z.shape[1])]
 vif["features"] = z.columns
 
 vif
-
-# 
-# 'waste_em_cnt', 'waste_pay_amt',
-# 'korean_work_pop_cnt', 'korean_visit_pop_cnt', 'long_resd_pop_cnt',
-# 'long_work_pop_cnt'
-# 'resident_resid_reg_pop', 'resident_foreign_pop', 'resident_total_pop',
-# 'card_use_cnt', 'card_use_amt', 'disQuantity', 'disCount'
-## 전부 0.05안에 들어 유의미한 변수이며 R결정계수값이 0.997로 높은편이다
-
-
-#%% 모델링 실행안됨 다시확인 해야함
-
-
-models = []
-models.append(['Ridge', Ridge()])
-models.append(['Lasso', Lasso()])
-models.append(['LinearRegression', LinearRegression()])
-
-list_1 = []
-
-for m in range(len(models)):
-    print(models[m])
-    model = models[m][1]
-    model.fit(train_rs_x, train_y)
-    y_pred = model.predict(test_x)
-    scores = mean_squared_error(test_y, y_pred)**0.5
-    list_1.append(scores)
-
-df_1 = pd.DataFrame(models)    
-df = pd.DataFrame(list_1)
-df.index = df_1.iloc[:,0]
-
-
-
-df
-
-
-#%% 모델링2
-# lightgbm, RandomForest, XGBoost 모델에는 정규화가 필요가 없다. -> tree형 모델들이기 때문 
+#%% 모델링
 models = []
 models.append(['Random Forest', RandomForestRegressor()])
 models.append(['XGBoost', XGBRegressor()])
-models.append(['SVR', SVR()])
 models.append(['CatBoostRegressor', CatBoostRegressor(logging_level=("Silent"))])
 models.append(['Lightgbm', LGB.LGBMRegressor()])
 
+
+list_1 = []
 
 
 for m in range(len(models)):
@@ -335,7 +281,7 @@ df.index = df_1.iloc[:,0]
 ## Lightgbm 모델의 rmse가 가장 낮음
 df
 
-#%% 하이퍼 파라미터 튜닝
+#%% LGBM 하이퍼 파라미터 튜닝
 gridParams = { 
     'learning_rate': [0.005],
     'n_estimators': [40],
@@ -358,12 +304,13 @@ print('Optimized hyperparameters', gridcv.best_params_)
 
 
 
-#%% 최적의 모형선정
+#%% LGBM 4663982.861972165
 model = LGB.LGBMRegressor(colsample_bytree = 0.65,
                            learning_rate = 0.005,
-                           n_estimators = 40, 
-                           num_boost_round = 3000, 
-                           num_leaves = 64,
+                           n_estimators = 40,
+                           num_iterations=3000,
+                           feature_fraction=0.7,
+                           num_leaves = 32,
                            random_state = 501,
                            reg_alpha = 1,
                            reg_lambda = 1, 
@@ -378,10 +325,81 @@ y_pred
 scores
 
 
-#%% sample submission
+#%% CatBoost Regressor 2947498.404632697
+model2 = CatBoostRegressor(logging_level = ("Silent"))
 
-seven = y_pred[0:42]
-eight = y_pred[42:]
+model2.fit(train_x, train_y)
+y_pred2 = model2.predict(test_x)
+
+scores2 = mean_squared_error(test_y, y_pred2) ** 0.5
+
+y_pred2
+scores2
+
+
+#%% 랜덤포레스트 하이퍼파라미터 튜닝
+
+gridParams2 = {'n_estimators' : [10,100],
+          'max_depth' : [6,8,10,12],
+          'min_samples_leaf' : [8, 12, 18],
+          'min_samples_split' : [8, 16, 20]
+          }
+rf  = RandomForestRegressor(n_estimators=100)
+
+gridcv = GridSearchCV(rf, param_grid = gridParams2, cv = 3)
+gridcv.fit(train_x, train_y)
+
+
+print('Optimized hyperparameters', gridcv.best_params_) 
+
+#%% 랜덤포레스트 모델선정 5437888.144746658
+model3 = RandomForestRegressor(max_depth = 10,
+                           min_samples_leaf = 8,
+                           n_estimators = 100,
+                           min_samples_split = 16,
+                           )
+
+model3.fit(train_x, train_y)
+y_pred3 = model3.predict(test_x)
+
+scores3 = mean_squared_error(test_y, y_pred3)**0.5
+
+y_pred3
+scores3
+
+
+#%% Xgboost regressor 하이퍼 파라미터튜닝
+gridParams3 = {'n_estimators' : [40,400,4000],
+          'max_depth' : [6,8,10,12],
+          'colsample_bytree' : [0.2, 0.9, 0.1],
+          'eta' : [0.01, 0.05, 0.1, 0.5]
+          }
+reg  = XGBRegressor()
+
+gridcv = GridSearchCV(reg, param_grid = gridParams3, cv = 3)
+gridcv.fit(train_x, train_y, eval_metric = "rmse")
+
+
+print('Optimized hyperparameters', gridcv.best_params_) 
+
+#%% Xgb regressor 모델 선정
+
+model4 = XGBRegressor(n_estimators = 4000,
+                      max_depth = 6,
+                      colsample_bytree = 0.9,
+                      eta = 0.1,)
+
+model4.fit(train_x, train_y)
+y_pred4 = model4.predict(test_x)
+
+scores4 = mean_squared_error(test_y, y_pred4) ** 0.5
+
+y_pred4
+scores4
+#%% sample submission #csv로 작성 후 엑셀에서 붙여넣기로 진행
+
+seven = np.around(y_pred2[0:42],1)
+eight = np.around(y_pred2[42:],1)
 
 DF = pd.DataFrame({'행정동명': sample_index, '7월 배출량(g)': seven, '8월 배출량(g)': eight})
 
