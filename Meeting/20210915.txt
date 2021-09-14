@@ -1,0 +1,41 @@
+기존 변수 4개
+waste_em_cnt, resident_resid_reg_pop, resident_foreign_pop, resident_total_pop
+
+rfid 관련 변수 2개
+disQuantity, disCount
+%변동사항%
+rfid 관련 결측치를 '전체 평균'으로 본 것이 아닌
+1. 읍면동별 평균
+2. 존재하지 않는 값에 대해서한 전체 평균 처리
+로 진행함
+
+유의미해보이는 2개 변수
+korean_visit_pop_cnt
+short_visit_pop_cnt
+
+
+추가된 변수가 0개인 경우
+전부 뺐을때의 rmse 7847333
+
+추가된 변수가 1개인 경우
+disquantity만 8958280->8143558
+discount만 9301898->8556910
+short_visit_pop_cnt만 7555560
+korean_visit_pop_cnt만 7728776
+
+추가된 변수가 2개인 경우
+korean_visit_pop_cnt+short_visit_pop_cnt 6895204
+korean_visit_pop_cnt+disquantity 8603878->7846987
+korean_visit_pop_cnt+discount 8426455->8387209
+disquantity+short_visit_pop_cnt 8647734->7347351
+disquantity+discount 9442557->7384986
+short_visit_pop_cnt+discount 8445489->8072087
+
+추가된 변수가 3개인 경우
+disCount 제외 7616698->6377508
+disQuantity 제외 7231619->7272056
+short_visit_pop_cnt 제외 8036973->6969326
+korean_visit_pop_cnt 제외 8192367->7175001
+
+추가된 변수가 4개인 경우
+rfid+2개 변수 추가하고 돌렸을 때의 rmse 8118124->7346011
