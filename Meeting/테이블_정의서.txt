@@ -127,6 +127,8 @@ base_date(기준일자)와 cmd_nm(읍면동명)을 인덱스로 두고 테이블
  '화북동': 42,
  '효돈동': 43}
 
+
+
 1차로 살아있는 10개의 변수 정의서
 'waste_em_cnt' : 쓰레기 일일 배출건수
 'waste_pay_amt' : 쓰레기 총 지불금액
@@ -138,3 +140,12 @@ base_date(기준일자)와 cmd_nm(읍면동명)을 인덱스로 두고 테이블
 'short_visit_pop_cnt' : 단기체류 외국인 1일 측정 거주인구 
 'card_use_cnt' : 음식 관련 카드소비 결제 건수
 'card_use_amt' : 음식 관련 카드소비 총 결제 금액
+
+최종(1차)로 살아있는 7개의 변수 정의
+waste_em_cnt : 쓰레기 일일 배출건수
+korean_visit_pop_cnt : 내국인 1일 측정 방문인구
+short_visit_pop_cnt : 단기체류 외국인 1일 측정 거주인구
+resident_resid_reg_pop : 주민등록상 거주 인구
+resident_foreign_pop : 외국인 거주인구
+resident_total_pop : 총 거주 인구
+disQuantity : 읍면동별 rfid 배출량
