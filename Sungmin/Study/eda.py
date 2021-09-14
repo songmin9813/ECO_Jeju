@@ -38,8 +38,8 @@ korean = pd.read_csv(path + "/korean_group.csv")
 long = pd.read_csv(path + "/long_group.csv")
 short = pd.read_csv(path + "/short_group.csv")
 res = pd.read_csv(path + "/resident_group.csv")
-card = pd.read_csv(path + "/new_card_spending.csv")
-rfid = pd.read_csv(path2 + "/rfid_group_new_nan2.csv")
+card = pd.read_csv(path + "/card_group.csv")
+rfid = pd.read_csv(path2 + "/rfid_group.csv")
 
 ## 라벨인코더는 범주형 변수를 명목형 변수(수치형)으로 변환 할때 사용
 ## 피처들의 단위가 모두 다르므로 StandardScaler를 사용 -> 이상치가 있나 없나 탐지해봐야함
