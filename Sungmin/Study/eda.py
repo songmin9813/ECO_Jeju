@@ -28,7 +28,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # path = "D:/git_project/ECO_Jeju/Sungmin/new_datas/2nd_edition"
-path = "C:/Users/mitha/OneDrive/바탕 화면/dev/ECO_Jeju/Sungmin/new_datas/3rd_edition"
+path = "C:/Users/mitha/OneDrive/바탕 화면/dev/ECO_Jeju/Sungmin/new_datas/final_edition"
 path2 = "C:/Users/mitha/OneDrive/바탕 화면/dev/ECO_Jeju/Sungmin/new_datas/external"
 path3 = "D:/빅콘테스트/데이터/02_평가데이터_update(210806)"
 
@@ -39,7 +39,7 @@ long = pd.read_csv(path + "/long_group.csv")
 short = pd.read_csv(path + "/short_group.csv")
 res = pd.read_csv(path + "/resident_group.csv")
 card = pd.read_csv(path + "/card_group.csv")
-rfid = pd.read_csv(path2 + "/rfid_group.csv")
+rfid = pd.read_csv(path + "/rfid_group.csv")
 
 ## 라벨인코더는 범주형 변수를 명목형 변수(수치형)으로 변환 할때 사용
 ## 피처들의 단위가 모두 다르므로 StandardScaler를 사용 -> 이상치가 있나 없나 탐지해봐야함
