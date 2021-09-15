@@ -48,14 +48,8 @@ sample_index = waste["emd_nm"].unique()
 
 
 emd_nm = new_waste["emd_nm"]
-## le.fit을 이용해 명목형변수로 변경
-le.fit(waste["emd_nm"])
-emd_nm = le.transform(waste["emd_nm"])
-new_waste["emd_nm"] = emd_nm
 new_waste = new_waste.set_index(["base_date", "emd_nm"])
 
-
-le.classes_
 
 
 
@@ -66,14 +60,6 @@ korean.drop(korean.loc[korean["emd_nm"] == "우도면"].index, inplace = True)
 korean.info()
 
 new_korean = korean
-
-korean["emd_nm"].unique()
-
-le.fit(korean["emd_nm"])
-emd_nm = le.transform(korean["emd_nm"])
-new_korean["emd_nm"] = emd_nm
-
-le.classes_
 
 new_korean = new_korean.drop(['korean_sex_남성', 'korean_sex_여성', 'korean_age_0', 'korean_age_10',
        'korean_age_20', 'korean_age_30', 'korean_age_40', 'korean_age_50',
@@ -113,9 +99,6 @@ new_long = new_long.drop(['long_nationality_AUS', 'long_nationality_BGD',
 
 
 
-le.fit(long["emd_nm"])
-emd_nm = le.transform(long["emd_nm"])
-new_long["emd_nm"] = emd_nm
 
 new_long = new_long.set_index(["base_date", "emd_nm"])
 
@@ -139,10 +122,6 @@ new_short = new_short.drop(['short_nationality_CHN', 'short_nationality_ETC',
        'short_nationality_USA', 'short_nationality_VNM'], axis = 1)
 
 
-le.fit(short["emd_nm"])
-emd_nm = le.transform(short["emd_nm"])
-new_short["emd_nm"] = emd_nm
-
 new_short = new_short.set_index(["base_date", "emd_nm"])
 
 #%% resdient 
@@ -155,10 +134,6 @@ res.drop(res.loc[res["emd_nm"] == "우도면"].index, inplace = True)
 
 new_res = res
 
-le.fit(res["emd_nm"])
-emd_nm = le.transform(res["emd_nm"])
-new_res["emd_nm"] = emd_nm
-res.columns
 
 new_res = new_res.set_index(["base_date", "emd_nm"])
 
@@ -175,9 +150,6 @@ card.drop(card.loc[card["emd_nm"] == "우도면"].index, inplace = True)
 
 new_card = card
 
-le.fit(card["emd_nm"])
-emd_nm = le.transform(card["emd_nm"])
-new_card["emd_nm"] = emd_nm
 
 new_card = new_card.set_index(["base_date", "emd_nm"])
 
@@ -189,17 +161,16 @@ rfid.isna().sum()
 
 new_rfid = rfid
 
-le.fit(rfid["emd_nm"])
-emd_nm = le.transform(rfid["emd_nm"])
-new_rfid["emd_nm"] = emd_nm
 
 new_rfid = new_rfid.set_index(["base_date", "emd_nm"])
 
 #%% 데이터 합치기, train test 셋 분리
 data = pd.concat([new_waste, new_korean, new_long, new_short, new_res, new_card, new_rfid], axis = 1)
 col = data.columns
-data_index = data.index
+data.reset_index(inplace=True)
 
+data.set_index(["base_date","emd_nm"], inplace=True)
+data_index = data.index
 
 # 7월 평균 데이터 생성
 sum_seven = data.loc['2018-07']+data.loc['2019-07']+data.loc['2020-07']
@@ -209,8 +180,8 @@ sum_eight = data.loc['2018-08']+data.loc['2018-08']+data.loc['2018-08']
 avg_eight = sum_eight/3
 
 # 멀티인덱스 생성
-index_2 = [['2021-07','2021-08'],['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21',
-                                  '22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41']]
+index_2 = [['2021-07','2021-08'],['건입동','구좌읍','남원읍','노형동','대륜동','대정읍','대천동','도두동','동홍동','봉개동','삼도1동','삼도2동','삼양동','서홍동','성산읍','송산동','아라동','안덕면','알수없음','애월읍','연동','영천동',
+                                  '예래동','오라동','외도동','용담1동','용담2동','이도1동','이도2동','이호동','일도1동','일도2동','정방동','조천읍','중문동','중앙동','천지동','표선면','한경면','한림읍','화북동','효돈동']]
 
 
 multi_index_2 = pd.MultiIndex.from_product(index_2)
@@ -219,14 +190,25 @@ new_index = data_index.append(multi_index_2)
 
 
 new_data = pd.concat([data, avg_seven, avg_eight])
+new_data.index = new_index
 
 ## 결측값을 각 피처들의 평균값으로 대체하기 위해 SimpleImputer 사용
+
+
+new_data.reset_index(inplace=True)
+
+le.fit(new_data["emd_nm"])
+emd_nm = le.transform(new_data["emd_nm"])
+new_data["emd_nm"] = emd_nm
+new_data.set_index(["base_date", "emd_nm"], inplace=True)
+
 imputer = SimpleImputer(strategy = 'mean')
 imp_data = pd.DataFrame(imputer.fit_transform(new_data))
 imp_data.columns = col
 imp_data = imp_data.set_index(new_index)
 
 imp_data.info()
+
 
 #%% 기존 모델
 x = imp_data.drop(["waste_em_g"], axis = 1)
@@ -237,6 +219,7 @@ test_x = x.iloc[1764:]
 train_y = y[0:1764]
 test_y = y[1764:]
 
+#%% 기존 모델
 
 train_rs_x = rs.fit_transform(train_x)
 model1 = sm.OLS(train_y, train_rs_x) 
