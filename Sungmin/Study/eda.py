@@ -246,6 +246,7 @@ imp_corr2 = imp_corr1.corr()
 x = imp_data.drop(["waste_em_g", "long_visit_pop_cnt", "korean_resd_pop_cnt", "korean_visit_pop_cnt","korean_work_pop_cnt","disCount","long_resd_pop_cnt","waste_pay_amt","long_work_pop_cnt","mct_cat_nm_6","mct_cat_nm_7","mct_cat_nm_4","mct_cat_nm_1","mct_cat_nm_0","mct_cat_nm_8","mct_cat_nm_9","use_cnt"], axis=1)
 #x["disavr"]=imp_data["disQuantity"]/imp_data["disCount"]
 x.columns
+x.head()
 x_corr = x.corr()
 y = np.array(imp_data["waste_em_g"])
 # 모델링을 하기 위해 train과 test셋을 2018-01부터 2021-03까지로 나눈다 704 
